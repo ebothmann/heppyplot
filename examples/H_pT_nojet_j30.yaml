@@ -1,0 +1,81 @@
+---
+### Figure settings ###
+# The plot title (optional)
+title:              'H @ LHC 13 TeV'
+# The x axis label (required)
+x_title:            '$H$ $p_T$ [GeV]'
+# How to draw bins, possible values are 'center' and 'step' (default)
+bin_style:          center
+
+### Main plot settings ###
+# Where to put the legend, defaults to 'best'
+legend_loc:         lower left
+# An optional annotation
+annotation:         "H + soft jets @ Sherpa LO multi-jet merged\njet $p_T \\leq 30$ GeV, PDF: CT10"
+# Where to put the annotation, defaults to 'upper right' ('best' is not supported here)
+annotation_loc:     upper right
+# Prune the lowest tick, useful when labels from the main and the diff plot overlap
+# The default is no
+y_tick_prune_lower: yes
+
+# Other optional main plot settings include:
+# property              default       overwritable for diff subplot
+# band_style            ('ci_band')
+# legend_hidden         None
+# legend_title          None
+# legend_borderpad      1.2
+# annotation_borderpad  1.2
+# x_lim                 None
+# x_lim_trim            no
+# y_lim                 None          ✔︎
+# horizontal_lines      None          ✔︎
+# x_log                 no
+# y_log                 no            ✔︎
+# y_max_ticks           None          ✔︎
+
+### Overwritable plot settings ###
+# The y axis label (required)
+y_title:            '$\mathrm{d}\sigma/\mathrm{d}p_T$ [pb/GeV]'
+
+### Settings and overwrites for diff subplot ###
+# These settings will default to the overwritable plot settings above
+diff: {
+  y_title:     Ratio to CV,
+  y_lim:       [0.75, 1.25],
+
+  # Other diff subplot settings:
+  # property            default
+  # y_tick_prune_upper  no
+}
+
+distributions:
+
+  # For each distribution, give at least the path.
+  # The path can be either point to single file or to a directory.
+  # When path is a directory, all files therein will
+  # be used to generate an error band.
+  - path:             reweighting-CT10run-CT10
+    # The label for the plot legend
+    label:            Sherpa internal reweighting
+    # For YODA files, the histogram name must be specified:
+    histogram_name:   /MC_HJETS_STABLE_CUTS/H_pT_nojet_j30
+    # Set hidden to yes to omit this distribution from the main plot
+    # (defaults to no)
+    hidden:           no
+    # If normalized is set to yes, all other distributions
+    # in the main plot will be normalized against this one
+    # (defaults to no)
+    normalized:       no
+    # For the diff subplot, hidden defaults to yes (!), normalized to no
+    # If no distribution sets hidden to no here, the subplot will be omitted
+    diff:             {hidden: no, normalized: yes}
+    # specify how the error band ist calculated from the distribution subsets
+    # the default is standard_error (which you'd use e.g. for an NNPDF band)
+    err_estimator:    asymmetric_hessian_error
+
+  - path:             dedicated-CT10
+    label:            Dedicated runs
+    histogram_name:   /MC_HJETS_STABLE_CUTS/H_pT_nojet_j30
+    diff:             {hidden: no}
+
+...

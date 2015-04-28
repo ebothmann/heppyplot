@@ -1,0 +1,30 @@
+#! /usr/bin/env python
+# coding=utf-8
+
+from __future__ import print_function
+
+import os
+import argparse
+import matplotlib.pyplot as plt
+
+import heppyplot
+
+parser = argparse.ArgumentParser()
+parser.add_argument("files", default=["Plot.yaml"], nargs='*')
+parser.add_argument("-l", "--usetex", action="store_true")
+parser.add_argument("-t", "--transparency", action="store_true")
+args = parser.parse_args()
+
+if args.usetex:
+    heppyplot.latexify()
+
+for f in args.files:
+    config = heppyplot.read_configuration_file(f)
+    fig_path = os.path.splitext(f)[0]
+    if args.transparency:
+        fig_path += ".png"
+    else:
+        fig_path += ".pdf"
+    print('Plot "' + fig_path + '" ...')
+    heppyplot.plot(config)
+    plt.savefig(fig_path, transparent=args.transparency)

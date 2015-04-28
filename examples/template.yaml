@@ -1,0 +1,31 @@
+---
+### Figure settings ###
+title:              'H production @ LHC 13 TeV'
+x_title:            '$m_H$ [GeV]'
+
+### Main plot settings ###
+annotation:         "The Higgs has mass\nthe Higgs gives mass"
+annotation_loc:     center right
+
+### Overwritable plot settings ###
+y_title:            '$\mathrm{d}\sigma/\mathrm{d}m$ [pb/GeV]'
+
+### Settings and overwrites for diff subplot ###
+diff: {
+  y_title:          Ratio to CV,
+}
+
+### Distributions for plotting and/or normalization ###
+distributions:
+
+  - path:             some/path/to/file/or/directory
+    label:            ATLAS
+    histogram_name:   /MC_HINC/H_mass
+    diff:             {hidden: no, normalized: yes}
+
+  - path:             another/path/to/file/or/directory
+    label:            CMS
+    histogram_name:   /MC_HINC/H_mass
+    diff:             {hidden: no}
+
+...
