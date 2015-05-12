@@ -10,6 +10,7 @@ from .statistics import *
 
 def dataframes_from_config(config):
 
+
     dataframe = None
     diff_dataframe = None
 
@@ -33,10 +34,12 @@ def dataframes_from_config(config):
 
     x_lim = read_configuration_value(config, key='x_lim', default=None)
 
+    data_path = read_configuration_value(config, key='data_path', default=".")
+
     for distribution in read_configuration_value(config, key='distributions'):
         dataframes = []
         diff_dataframes = []
-        path = read_configuration_value(distribution, key='path')
+        path = os.path.join(data_path, read_configuration_value(distribution, key='path'))
         histogram_name = read_configuration_value(distribution, key='histogram_name', default=None)
         if os.path.isdir(path):
             data_file_paths = glob.glob(os.path.join(path, '*.*'))

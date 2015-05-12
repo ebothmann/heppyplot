@@ -11,6 +11,8 @@ import heppyplot
 
 parser = argparse.ArgumentParser()
 parser.add_argument("files", default=["Plot.yaml"], nargs='*')
+parser.add_argument("-o", "--output-path", default=None)
+parser.add_argument("-d", "--data-path", default=None)
 parser.add_argument("-l", "--usetex", action="store_true")
 parser.add_argument("-t", "--transparency", action="store_true")
 args = parser.parse_args()
@@ -18,13 +20,30 @@ args = parser.parse_args()
 if args.usetex:
     heppyplot.latexify()
 
+is_fig_name_constant = False
+fig_dir = ""
+if args.output_path is not None:
+    if os.path.isdir(args.output_path):
+        # Make sure we have a trailing slash
+        fig_dir = os.path.join(args.output_path, "")
+    elif len(args.files) > 1:
+        raise Exception("If you are have more than one input file, " +
+                        "then the output path must be an existing directory.")
+    else:
+        is_fig_name_constant = True
+        fig_name = args.output_path
+
 for f in args.files:
     config = heppyplot.read_configuration_file(f)
-    fig_path = os.path.splitext(f)[0]
-    if args.transparency:
-        fig_path += ".png"
-    else:
-        fig_path += ".pdf"
-    print('Plot "' + fig_path + '" ...')
+    if args.data_path is not None:
+        config['data_path'] = args.data_path
+    
+    if not is_fig_name_constant:
+        fig_name = os.path.splitext(f)[0]
+        if args.transparency:
+            fig_name += ".png"
+        else:
+            fig_name += ".pdf"
+    print('Plot "' + fig_name + '" ...')
     heppyplot.plot(config)
-    plt.savefig(fig_path, transparent=args.transparency)
+    plt.savefig(fig_dir + fig_name, transparent=args.transparency)
