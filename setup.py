@@ -51,7 +51,7 @@ setup(
 
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
 
-    install_requires = ['matplotlib', 'numpy', 'pandas', 'yaml', 'seaborn'],
+    install_requires = ['matplotlib', 'numpy', 'pandas', 'pyaml', 'seaborn'],
 
     scripts = ['scripts/heppyplot']
 

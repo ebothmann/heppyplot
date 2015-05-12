@@ -50,6 +50,9 @@ def dataframes_from_config(config):
             bins = bins_from_path(data_file_path, histogram_name=histogram_name, centered=centered)
             dataframe = pd.DataFrame(bins,
                                      columns=[x_title, y_titles[0]])
+            scale_factor = read_configuration_value(distribution, key='scale', default=None)
+            if scale_factor is not None:
+                dataframe[y_titles[0]] *= scale_factor
             dataframe['unit'] = i
             condition_name = read_configuration_value(distribution, key='label', default=path)
             dataframe[condition] = condition_name

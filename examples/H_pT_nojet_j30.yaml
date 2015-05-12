@@ -77,5 +77,6 @@ distributions:
     label:            Dedicated runs
     histogram_name:   /MC_HJETS_STABLE_CUTS/H_pT_nojet_j30
     diff:             {hidden: no}
+    err_estimator:    asymmetric_hessian_error
 
 ...
