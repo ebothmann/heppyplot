@@ -1,7 +1,7 @@
 import seaborn as sns
 
 def setup_seaborn_with_font_scale(font_scale):
-    sns.set_context('talk', font_scale)  # Contexts are paper, notebook, talk and poster
+    sns.set_context('notebook', font_scale)  # Contexts are paper, notebook, talk and poster
     sns.set_style('ticks')  # Styles are darkgrid, whitegrid, dark, white, ticks
 
     sns.set_palette('muted')

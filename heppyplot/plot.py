@@ -1,3 +1,4 @@
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 
@@ -7,7 +8,7 @@ from .plot_dataframe import *
 from .plot_helpers import *
 from .seaborn_setup import *
 
-font_scale = 1.2
+font_scale = 1.0  #1.2
 setup_seaborn_with_font_scale(font_scale)
 
 def plot(config):
@@ -30,7 +31,7 @@ def plot(config):
     # Add figure title
     title = read_configuration_value(config, key='title', default=None)
     if title is not None:
-        fig.suptitle(title)
+        fig.suptitle(title, fontsize=mpl.rcParams["axes.titlesize"])
 
     # prepare dataframe plotting
     legend_title = read_configuration_value(config, key='legend_title', default='')

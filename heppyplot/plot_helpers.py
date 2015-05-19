@@ -41,5 +41,5 @@ def add_annotation_on_axis(axis, annotation, loc='upper right', borderpad=1.2):
                       codes[loc],
                       frameon=False,
                       borderpad=borderpad,
-                      prop=dict(linespacing=2.0))
+                      prop=dict(linespacing=2.5))
     axis.add_artist(at)
