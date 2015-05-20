@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+import matplotlib.transforms as mtransforms
 from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
 
 def setup_axes(diff=False):
@@ -43,3 +44,13 @@ def add_annotation_on_axis(axis, annotation, loc='upper right', borderpad=1.2):
                       borderpad=borderpad,
                       prop=dict(linespacing=2.5))
     axis.add_artist(at)
+
+def get_major_ticks_within_view_interval(axis):
+    interval = axis.get_view_interval()
+    ticks_in_view_interval = []
+    for tick, loc in zip(axis.get_major_ticks(),
+                         axis.get_major_locator()()):
+        if mtransforms.interval_contains(interval, loc):
+            ticks_in_view_interval.append(tick)
+    return ticks_in_view_interval
+

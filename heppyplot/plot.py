@@ -1,6 +1,6 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator
+from matplotlib.ticker import MaxNLocator, LogLocator
 
 from .configuration import *
 from .data import *
@@ -106,10 +106,18 @@ def plot(config):
     except KeyError:
       pass
     max_ticks = read_configuration_subplot_values(config, key='y_max_ticks', defaults=[None, None])
-    for axis, subplot_prune, subplot_max_ticks in zip(axes, prune, max_ticks):
+    for axis, subplot_prune, subplot_max_ticks, subplot_y_log in zip(axes, prune, max_ticks, y_log):
         if subplot_max_ticks is None:
             subplot_max_ticks = len(axis.get_yticklabels())
-        axis.yaxis.set_major_locator(MaxNLocator(nbins=subplot_max_ticks-1, prune=subplot_prune))
+        if subplot_y_log:
+            axis.yaxis.set_major_locator(LogLocator(numticks=subplot_max_ticks))
+            ticks = get_major_ticks_within_view_interval(axis.yaxis)
+            if subplot_prune == 'lower':
+                ticks[0].label.set_visible(False)
+            if subplot_prune == 'upper':
+                ticks[-1].label.set_visible(False)
+        else:
+            axis.yaxis.set_major_locator(MaxNLocator(nbins=subplot_max_ticks-1, prune=subplot_prune))
 
     if has_diff:
         for axis in axes:
