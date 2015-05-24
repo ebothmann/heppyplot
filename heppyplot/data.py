@@ -10,7 +10,6 @@ from .statistics import *
 
 def dataframes_from_config(config):
 
-
     dataframe = None
     diff_dataframe = None
 
@@ -41,6 +40,7 @@ def dataframes_from_config(config):
         diff_dataframes = []
         path = os.path.join(data_path, read_configuration_value(distribution, key='path'))
         histogram_name = read_configuration_value(distribution, key='histogram_name', default=None)
+        bin_heights_column = read_configuration_value(distribution, key='bin_heights_column', default=2)
         if os.path.isdir(path):
             data_file_paths = glob.glob(os.path.join(path, '*.*'))
         else:
@@ -50,7 +50,10 @@ def dataframes_from_config(config):
             if has_bands == False and i > 0:
                 has_bands = True
             centered = bin_style == 'center'
-            bins = bins_from_path(data_file_path, histogram_name=histogram_name, centered=centered)
+            bins = bins_from_path(data_file_path,
+                                  histogram_name=histogram_name,
+                                  bin_heights_column=bin_heights_column,
+                                  centered=centered)
             dataframe = pd.DataFrame(bins,
                                      columns=[x_title, y_titles[0]])
             scale_factor = read_configuration_value(distribution, key='scale', default=None)
