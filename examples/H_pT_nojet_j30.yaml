@@ -55,23 +55,36 @@ distributions:
   # When path is a directory, all files therein will
   # be used to generate an error band.
   - path:             reweighting-CT10run-CT10
+
     # The label for the plot legend
     label:            Sherpa internal reweighting
+
     # For YODA files, the histogram name must be specified:
     histogram_name:   /MC_HJETS_STABLE_CUTS/H_pT_nojet_j30
-    # Set hidden to yes to omit this distribution from the main plot
-    # (defaults to no)
-    hidden:           no
-    # If normalized is set to yes, all other distributions
-    # in the main plot will be normalized against this one
-    # (defaults to no)
-    normalized:       no
-    # For the diff subplot, hidden defaults to yes (!), normalized to no
-    # If no distribution sets hidden to no here, the subplot will be omitted
-    diff:             {hidden: no, normalized: yes}
+
     # specify how the error band ist calculated from the distribution subsets
     # the default is standard_error (which you'd use e.g. for an NNPDF band)
     err_estimator:    asymmetric_hessian_error
+
+    # Set hidden to yes to omit this distribution from the main plot
+    # (defaults to no)
+    hidden:           no
+
+    # If normalized is set to yes, all other (not explicitly normalized)
+    # distributions in the main plot will be normalized against this one
+    # (defaults to no)
+    normalized:       no
+
+    # Explicitly normalize against another distribution:
+    # (A distribution with the specified path must be given. However, it can
+    # be hidden of course. Using this option prevents this distribution from
+    # being also normalized by a distribution which specifies 'normalized: yes')
+    # normalized_by:    reweighting-CT10run-CT10
+
+    # For the diff subplot, hidden defaults to yes (!), normalized to no.
+    # You can also use the normalized_by option
+    # If no distribution sets hidden to no here, the subplot will be omitted
+    diff:             {hidden: no, normalized: yes}
 
   - path:             dedicated-CT10
     label:            Dedicated runs

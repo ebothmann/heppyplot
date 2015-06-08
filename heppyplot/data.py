@@ -1,26 +1,14 @@
-import sys
-import os
-import glob
-
-import pandas as pd
-
 from .configuration import *
-from .read_data import *
 from .statistics import *
+from .data_helpers import *
 
 def dataframes_from_config(config):
 
-    dataframe = None
-    diff_dataframe = None
-
-    normalized_dataframe = None
-    normalized_diff_dataframe = None
-
-    has_bands = False
-
+    default_normalizing_dataframes = [None, None]
+    main_and_diff_distributions = [[], []]
+    already_normalized = [[], []]
     settings = []
-    distributions = []
-    diff_distributions = []
+    has_bands = False
 
     # use axis labels as data column headers
     x_title = read_configuration_value(config, key='x_title')
@@ -30,94 +18,50 @@ def dataframes_from_config(config):
     condition = read_configuration_value(config, key='legend_title', default='')
 
     bin_style = read_configuration_value(config, key='bin_style', default='step')
+    centered = bin_style == 'center'
 
     x_lim = read_configuration_value(config, key='x_lim', default=None)
 
+    if read_configuration_value(config, key='err_estimator', default='asymmetric_hessian_error') == 'asymmetric_hessian_error':
+        err_estimator = asymmetric_hessian_error
+    else:
+        err_estimator = standard_error
+
     data_path = read_configuration_value(config, key='data_path', default=".")
 
-    for distribution in read_configuration_value(config, key='distributions'):
-        dataframes = []
-        diff_dataframes = []
-        path = os.path.join(data_path, read_configuration_value(distribution, key='path'))
-        histogram_name = read_configuration_value(distribution, key='histogram_name', default=None)
-        bin_heights_column = read_configuration_value(distribution, key='bin_heights_column', default=2)
-        if os.path.isdir(path):
-            data_file_paths = glob.glob(os.path.join(path, '*.*'))
-        else:
-            data_file_paths = [path]
-        for i, data_file_path in enumerate(data_file_paths):
+    config_distributions = read_configuration_value(config, key='distributions')
 
-            if has_bands == False and i > 0:
-                has_bands = True
-            centered = bin_style == 'center'
-            bins = bins_from_path(data_file_path,
-                                  histogram_name=histogram_name,
-                                  bin_heights_column=bin_heights_column,
-                                  centered=centered)
-            dataframe = pd.DataFrame(bins,
-                                     columns=[x_title, y_titles[0]])
-            scale_factor = read_configuration_value(distribution, key='scale', default=None)
-            if scale_factor is not None:
-                dataframe[y_titles[0]] *= scale_factor
-            dataframe['unit'] = i
-            condition_name = read_configuration_value(distribution, key='label', default=path)
-            dataframe[condition] = condition_name
+    for distribution in config_distributions:
 
-            # Truncate data not being used
-            # For step plots we make sure that we do not cut bins
-            if x_lim is not None:
-                dataframe = dataframe[dataframe[x_title] > x_lim[0]]
-                if (not centered) and dataframe.count()[0] % 2 == 1:
-                    dataframe.drop(dataframe.head(1).index, inplace=True)
-                dataframe = dataframe[dataframe[x_title] < x_lim[1]]
-                if (not centered) and dataframe.count()[0] % 2 == 1:
-                    dataframe.drop(dataframe.tail(1).index, inplace=True)
+        main_and_diff_normalized_dataframe_or_none, distribution_has_bands, \
+        main_and_diff_distributions_are_normalized = read_distribution(data_path,
+                                                                       distribution,
+                                                                       centered,
+                                                                       condition,
+                                                                       x_title,
+                                                                       y_titles,
+                                                                       x_lim,
+                                                                       err_estimator=err_estimator,
+                                                                       settings=settings,
+                                                                       main_and_diff_distributions=main_and_diff_distributions,
+                                                                       config_distributions=config_distributions)[1:]
 
-            append_to_dataframes(dataframe, dataframes, distribution)
-            normalized_dataframe = update_normalized_dataframe(dataframe, normalized_dataframe, distribution)
+        for i in range(2):
+            if main_and_diff_normalized_dataframe_or_none[i] is not None:
+                default_normalizing_dataframes[i] = main_and_diff_normalized_dataframe_or_none[i]
+            already_normalized[i].append(main_and_diff_distributions_are_normalized[i])
 
-            diff_dataframe = dataframe.copy()
-            diff_dataframe.rename(columns={y_titles[0]: y_titles[1]}, inplace=True)
+        if distribution_has_bands:
+            has_bands = distribution_has_bands
 
-            try:
-                append_to_dataframes(diff_dataframe, diff_dataframes, distribution['diff'], hidden_default=True)
-                normalized_diff_dataframe = update_normalized_dataframe(diff_dataframe, normalized_diff_dataframe, distribution['diff'])
-            except KeyError:
-                pass
-        distributions.append(dataframes)
-        diff_distributions.append(diff_dataframes)
+    for i, default_normalizing_dataframe in enumerate(default_normalizing_dataframes):
+        if default_normalizing_dataframe is not None:
+            for distribution, is_already_normalized in zip(main_and_diff_distributions[i], already_normalized[i]):
+                if not is_already_normalized:
+                    for df in distribution:
+                        df[y_titles[i]] /= default_normalizing_dataframe[y_titles[i]]
 
-        if read_configuration_value(config, key='err_estimator', default='asymmetric_hessian_error') == 'asymmetric_hessian_error':
-            err_estimator = asymmetric_hessian_error
-        else:
-            err_estimator = standard_error
-        settings.append({'err_estimator': err_estimator})
+    for i in range(2):
+        main_and_diff_distributions[i] = [pd.concat(dataframes) if len(dataframes) else None for dataframes in main_and_diff_distributions[i]]
 
-    if normalized_dataframe is not None:
-        for distribution in distributions:
-            for df in distribution:
-                df[y_titles[0]] /= normalized_dataframe[y_titles[0]]
-
-    if normalized_diff_dataframe is not None:
-        for distribution in diff_distributions:
-            for df in distribution:
-                df[y_titles[1]] /= normalized_diff_dataframe[y_titles[1]]
-
-    distributions = [pd.concat(dataframes) if len(dataframes) else None for dataframes in distributions]
-    diff_distributions = [pd.concat(dataframes) if len(dataframes) else None for dataframes in diff_distributions]
-
-    return distributions, diff_distributions, settings, has_bands
-
-
-def append_to_dataframes(dataframe, dataframes, distribution, hidden_key='hidden', hidden_default=False, should_copy=False):
-    if not read_configuration_value(distribution, key=hidden_key, default=hidden_default):
-        if should_copy:
-            dataframes.append(dataframe.copy())
-        else:
-            dataframes.append(dataframe)
-
-def update_normalized_dataframe(dataframe, normalized_dataframe, distribution, normalized_key='normalized', should_copy=True):
-    if (normalized_dataframe is None) and read_configuration_value(distribution, key=normalized_key, default=False):
-        return dataframe.copy()
-    else:
-        return normalized_dataframe
+    return main_and_diff_distributions[0], main_and_diff_distributions[1], settings, has_bands
