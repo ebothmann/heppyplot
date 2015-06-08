@@ -97,7 +97,7 @@ def read_distribution(data_path, distribution, centered, condition, x_title, y_t
     if settings is not None:
         settings.append({'err_estimator': err_estimator})
 
-    return main_and_diff_dataframes[0][0], normalized_dataframes, has_bands, (distribution_is_normalized[0], distribution_is_normalized[1])
+    return main_and_diff_dataframes[0][0], normalized_dataframes, has_bands, distribution_is_normalized
 
 def append_to_dataframes(dataframe, dataframes, distribution, hidden_key='hidden', hidden_default=False, should_copy=False):
     if not read_configuration_value(distribution, key=hidden_key, default=hidden_default):

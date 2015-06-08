@@ -15,11 +15,14 @@ def plot(config):
 
     # obtain data
     main_distributions, diff_distributions, distribution_settings, has_bands = dataframes_from_config(config)
-    has_diff = (diff_distributions is not [None]*len(diff_distributions))
+    for diff_distribution in diff_distributions:
+        if diff_distribution is not None:
+            has_diff = True
+            break
     distributions = [main_distributions]
     if has_diff:
         distributions.append(diff_distributions)
-    
+
     # obtain fig and axes
     fig, axes = setup_axes(has_diff)
     main_axis = axes[0]
@@ -43,15 +46,16 @@ def plot(config):
     # plot dataframes
     for axis, distribution, legend in zip(axes, distributions, [not legend_hidden, False]):
         for dataframe, setting, color in zip(distribution, distribution_settings, sns.color_palette()):
-            plot_dataframe(dataframe,
-                           axis=axis,
-                           condition=legend_title,
-                           band_style=band_style,
-                           legend=legend,
-                           color=color,
-                           linewidth=linewidth,
-                           err_estimator=setting['err_estimator'],
-                           alpha=alpha)
+            if dataframe is not None:
+                plot_dataframe(dataframe,
+                               axis=axis,
+                               condition=legend_title,
+                               band_style=band_style,
+                               legend=legend,
+                               color=color,
+                               linewidth=linewidth,
+                               err_estimator=setting['err_estimator'],
+                               alpha=alpha)
 
     # plot guides
     horizontal_lines = read_configuration_subplot_values(config, key='horizontal_lines', defaults=[[],[]])
