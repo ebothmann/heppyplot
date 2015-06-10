@@ -8,13 +8,15 @@ from .plot_dataframe import *
 from .plot_helpers import *
 from .seaborn_setup import *
 
-font_scale = 1.0  #1.2
-setup_seaborn_with_font_scale(font_scale)
 
 def plot(config):
 
+    font_scale = 1.0
+    setup_seaborn_with_font_scale(font_scale, context=config['context'])
+
     # obtain data
     main_distributions, diff_distributions, distribution_settings, has_bands = dataframes_from_config(config)
+    has_diff = False
     for diff_distribution in diff_distributions:
         if diff_distribution is not None:
             has_diff = True

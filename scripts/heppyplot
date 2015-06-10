@@ -15,10 +15,11 @@ parser.add_argument("-o", "--output-path", default=None)
 parser.add_argument("-d", "--data-path", default=None)
 parser.add_argument("-l", "--usetex", action="store_true")
 parser.add_argument("-t", "--transparency", action="store_true")
+parser.add_argument("-c", "--context", default="paper", choices=["paper", "talk"])
 args = parser.parse_args()
 
 if args.usetex:
-    heppyplot.latexify()
+    heppyplot.latexify(args.context)
 
 is_fig_name_constant = False
 fig_dir = ""
@@ -37,6 +38,7 @@ for f in args.files:
     config = heppyplot.read_configuration_file(f)
     if args.data_path is not None:
         config['data_path'] = args.data_path
+    config['context'] = args.context
     
     if not is_fig_name_constant:
         fig_name = os.path.splitext(f)[0]

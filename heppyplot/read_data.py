@@ -87,7 +87,7 @@ def left_bin_edge_from_dat_entry(entry):
     return entry[0]
 
 def right_bin_edge_from_dat_entry(entry):
-    return entry[0]
+    return entry[1]
 
 def bins_from_dat(path, bin_heights_column, centered=True):
     dat_histo = np.loadtxt(path, usecols = (0,1,bin_heights_column))
