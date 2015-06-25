@@ -26,7 +26,7 @@ y_tick_prune_lower: yes
 # legend_borderpad      1.2
 # annotation_borderpad  1.2
 # x_lim                 None
-# x_lim_trim            no
+# x_lim_trim            [no, no]
 # y_lim                 None          ✔︎
 # horizontal_lines      None          ✔︎
 # x_log                 no

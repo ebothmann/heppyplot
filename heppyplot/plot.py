@@ -86,10 +86,13 @@ def plot(config):
 
     x_lim = read_configuration_value(config, key='x_lim', default=None)
     if x_lim is not None:
-        if read_configuration_value(config, key='x_lim_trim', default=False):
+        x_lim_trim = read_configuration_value(config, key='x_lim_trim', default=None)
+        if x_lim_trim is not None:
             x_title = read_configuration_value(config, key='x_title')
-            x_lim[0] = main_distributions[0].head(1)[x_title].iloc[0]
-            x_lim[1] = main_distributions[0].tail(1)[x_title].iloc[0]
+            if (x_lim_trim[0]):
+                x_lim[0] = main_distributions[0].head(1)[x_title].iloc[0]
+            if (x_lim_trim[1]):
+                x_lim[1] = main_distributions[0].tail(1)[x_title].iloc[0]
         main_axis.set_xlim(x_lim)
 
     # adjust y range
@@ -142,7 +145,7 @@ def plot(config):
         borderpad = read_configuration_value(config, key='annotation_borderpad', default=1.2)
         add_annotation_on_axis(main_axis, annotation, loc=loc, borderpad=borderpad)
 
-    if read_configuration_value(config, key='x_log', default=False):
+    if read_configuration_value(config, key='x_log', default=False) or config['context'] == 'paper':
         plt.subplots_adjust(bottom=0.13*font_scale)
     else:
         plt.subplots_adjust(bottom=0.1*font_scale)
