@@ -14,6 +14,7 @@ parser.add_argument("files", default=["Plot.yaml"], nargs='*')
 parser.add_argument("-o", "--output-path", default=None)
 parser.add_argument("-d", "--data-path", default=None)
 parser.add_argument("-l", "--usetex", action="store_true")
+parser.add_argument("-w", "--width", default=None, type=float)
 parser.add_argument("-t", "--transparency", action="store_true")
 parser.add_argument("-c", "--context", default="paper", choices=["paper", "talk"])
 args = parser.parse_args()
@@ -39,6 +40,8 @@ for f in args.files:
     if args.data_path is not None:
         config['data_path'] = args.data_path
     config['context'] = args.context
+    if args.width is not None:
+        config['width'] = args.width
     
     if not is_fig_name_constant:
         fig_name = os.path.splitext(f)[0]

@@ -11,7 +11,7 @@ from .seaborn_setup import *
 
 def plot(config):
 
-    font_scale = 1.0
+    font_scale = 1.1
     setup_seaborn_with_font_scale(font_scale, context=config['context'])
 
     # obtain data
@@ -130,7 +130,7 @@ def plot(config):
 
     if has_diff:
         for axis in axes:
-            axis.get_yaxis().set_label_coords(-0.11,0.5)
+            axis.get_yaxis().set_label_coords(-0.13,0.5)
 
     # customize the default legend created by tsplot
     if not legend_hidden:
@@ -145,6 +145,11 @@ def plot(config):
         borderpad = read_configuration_value(config, key='annotation_borderpad', default=1.2)
         add_annotation_on_axis(main_axis, annotation, loc=loc, borderpad=borderpad)
 
+    width = read_configuration_value(config, key='width', default=None)
+    if width is not None:
+        set_figure_size_with_width(width)
+    if title is None:
+        plt.subplots_adjust(top=0.95)
     if read_configuration_value(config, key='x_log', default=False) or config['context'] == 'paper':
         plt.subplots_adjust(bottom=0.13*font_scale)
     else:

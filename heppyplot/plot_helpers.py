@@ -1,3 +1,5 @@
+import math
+
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.transforms as mtransforms
@@ -54,3 +56,14 @@ def get_major_ticks_within_view_interval(axis):
             ticks_in_view_interval.append(tick)
     return ticks_in_view_interval
 
+def set_figure_size_with_width(width):
+    params = {'figure.figsize': figure_size_from_width(width)}
+    plt.rcParams.update(params)
+
+def figure_size_from_width(width):
+    """Returns a single plot figure size in inches given a width in points"""
+    inches_per_point = 1.0/72.27
+    golden_mean = (math.sqrt(5)-1.0)/2.0
+    inches_width = width * inches_per_point
+    fig_height = inches_width*golden_mean
+    return [inches_width,fig_height]
