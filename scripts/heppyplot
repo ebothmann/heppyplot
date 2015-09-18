@@ -11,7 +11,8 @@ import heppyplot
 
 parser = argparse.ArgumentParser()
 parser.add_argument("files", default=["Plot.yaml"], nargs='*')
-parser.add_argument("-o", "--output-path", default=None)
+parser.add_argument("-n", "--histogram-names", default=None, nargs='*', help='The YODA histogram paths to iterate over.')
+parser.add_argument("-o", "--output-path", default=None, help='An output directory or an output base file name without an extension. The path can be relative or absolute.')
 parser.add_argument("-d", "--data-path", default=None)
 parser.add_argument("-l", "--usetex", action="store_true")
 parser.add_argument("-w", "--width", default=None, type=float)
@@ -22,9 +23,11 @@ args = parser.parse_args()
 if args.usetex:
     heppyplot.latexify(args.context)
 
-is_fig_name_constant = False
+is_fig_base_name_constant = False
 fig_dir = ""
 if args.output_path is not None:
+    if os.path.splitext(args.outputpath)[1] in ['.pdf', '.png']:
+        raise Exception("Please give an output path without an extension.")
     if os.path.isdir(args.output_path):
         # Make sure we have a trailing slash
         fig_dir = os.path.join(args.output_path, "")
@@ -32,23 +35,22 @@ if args.output_path is not None:
         raise Exception("If you are have more than one input file, " +
                         "then the output path must be an existing directory.")
     else:
-        is_fig_name_constant = True
-        fig_name = args.output_path
+        is_fig_base_name_constant = True
+        fig_base_name = args.output_path
 
 for f in args.files:
     config = heppyplot.read_configuration_file(f)
+    config['transparency'] = args.transparency
     if args.data_path is not None:
         config['data_path'] = args.data_path
     config['context'] = args.context
     if args.width is not None:
         config['width'] = args.width
+    if args.histogram_names is not None:
+        config['histogram_names'] = args.histogram_names
     
-    if not is_fig_name_constant:
-        fig_name = os.path.splitext(f)[0]
-        if args.transparency:
-            fig_name += ".png"
-        else:
-            fig_name += ".pdf"
-    print('Plot "' + fig_name + '" ...')
-    heppyplot.plot(config)
-    plt.savefig(fig_dir + fig_name, transparent=args.transparency)
+    if not is_fig_base_name_constant:
+        fig_base_name = os.path.splitext(f)[0]
+    print('Plot "' + fig_base_name + '" ...')
+    heppyplot.plot(config, fig_dir + fig_base_name)
+    

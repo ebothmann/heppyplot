@@ -2,7 +2,7 @@ from .configuration import *
 from .statistics import *
 from .data_helpers import *
 
-def dataframes_from_config(config):
+def dataframes_from_config(config, histogram_or_empty='', histogram_index_or_none=None):
 
     default_normalizing_dataframes = [None, None]
     main_and_diff_distributions = [[], []]
@@ -11,8 +11,8 @@ def dataframes_from_config(config):
     has_bands = False
 
     # use axis labels as data column headers
-    x_title = read_configuration_value(config, key='x_title')
-    y_titles = read_configuration_subplot_values(config, key='y_title', defaults=[None, '__use_main__'])
+    x_title = read_configuration_value(config, key='x_title', index=histogram_index_or_none)
+    y_titles = read_configuration_subplot_values(config, key='y_title', defaults=['__no_default__', '__use_main__'], index=histogram_index_or_none)
 
     # condition will be used as legend title by tsplot
     condition = read_configuration_value(config, key='legend_title', default='')
@@ -20,7 +20,7 @@ def dataframes_from_config(config):
     bin_style = read_configuration_value(config, key='bin_style', default='step')
     centered = bin_style == 'center'
 
-    x_lim = read_configuration_value(config, key='x_lim', default=None)
+    x_lim = read_configuration_value(config, key='x_lim', default=None, index=histogram_index_or_none)
 
     if read_configuration_value(config, key='err_estimator', default='asymmetric_hessian_error') == 'asymmetric_hessian_error':
         err_estimator = asymmetric_hessian_error
@@ -41,6 +41,7 @@ def dataframes_from_config(config):
                                                                        x_title,
                                                                        y_titles,
                                                                        x_lim,
+                                                                       histogram_or_empty=histogram_or_empty,
                                                                        err_estimator=err_estimator,
                                                                        settings=settings,
                                                                        main_and_diff_distributions=main_and_diff_distributions,

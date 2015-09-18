@@ -7,14 +7,17 @@ from .configuration import *
 from .read_data import *
 
 def read_distribution(data_path, distribution, centered, condition, x_title, y_titles, x_lim,
-                      err_estimator=None, settings=None, main_and_diff_distributions=[None, None],
+                      histogram_or_empty='', err_estimator=None, settings=None, main_and_diff_distributions=[None, None],
                       config_distributions=None, read_always=False, first_only=False, ignore_normalizations=False):
     has_bands = False
     main_and_diff_dataframes = [[], []]
     normalized_dataframes = [None, None]
     distribution_is_normalized = [False, False]
     path = os.path.join(data_path, read_configuration_value(distribution, key='path'))
-    histogram_name = read_configuration_value(distribution, key='histogram_name', default=None)
+    if histogram_or_empty != '':
+        histogram_name = histogram_or_empty
+    else:
+        histogram_name = read_configuration_value(distribution, key='histogram_name', default=None)
     bin_heights_column = read_configuration_value(distribution, key='bin_heights_column', default=2)
     if os.path.isdir(path):
         data_file_paths = glob.glob(os.path.join(path, '*.*'))
