@@ -9,7 +9,9 @@ bin_style:          center
 
 ### Main plot settings ###
 # Where to put the legend, defaults to 'best'
-legend_loc:         lower left
+legend_loc:              lower left
+draws_legend_background: no
+legend_borderpad:        1.0
 # An optional annotation
 annotation:         "H + soft jets @ Sherpa LO multi-jet merged\njet $p_T \\leq 30$ GeV, PDF: CT10"
 # Where to put the annotation, defaults to 'upper right' ('best' is not supported here)

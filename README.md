@@ -1,6 +1,9 @@
 # heppyplot
 A package for plotting histogrammed data with special support for high energy physics applications.
 
+![Scale variation example](examples/scales/scales.pdf)
+![PDF variation example](examples/pdf/H_pT_nojet_j30.pdf)
+
 ## Installation
 
 Currently we use a custom fork of the excellent [seaborn](http://stanford.edu/~mwaskom/software/seaborn/) package.

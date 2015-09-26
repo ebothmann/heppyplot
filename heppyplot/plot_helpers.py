@@ -25,13 +25,13 @@ def layout_main_and_diff_axis(fig, axes):
     main_axis.set_xlabel('')
     diff_axis.xaxis.tick_bottom()
 
-def configure_legend_on_axis(axis, title='', loc='best', borderpad=1.2):
+def configure_legend_on_axis(axis, title='', loc='best', borderpad=1.2, draws_background=True):
     legend = axis.legend(loc=loc,
                          title=title,
                          borderaxespad=borderpad,
                          framealpha=0.8,
-                         frameon=True,
-                         fancybox=True)
+                         frameon=draws_background,
+                         fancybox=draws_background)
     legend.get_frame().set_color((0.96,0.96,0.96))
     for line in legend.get_lines():
         line.set_alpha(1.0)

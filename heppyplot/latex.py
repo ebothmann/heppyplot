@@ -16,3 +16,6 @@ def latexify(context):
         mpl.rcParams['text.latex.preamble'] = [
            r'\usepackage{siunitx}'
            ]
+
+def delatexify():
+    plt.rc('text', usetex=False)

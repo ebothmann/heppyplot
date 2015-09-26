@@ -3,20 +3,24 @@
 title:              'Z @ Tevatron 1.96 TeV'
 x_title:            '$Z$ $|y|$'
 bin_style:          step
+requires_latex:     yes
 
 # Main plot settings
-legend_loc:         lower left
-y_tick_prune_lower: yes
-annotation_loc:     upper right
-annotation:         "Z @ Sherpa (rel-2.1.1) NLO (B, V, I, RS)\n$\\SI{66}{GeV} \\leq m_{e^+e^-} \\leq \\SI{116}{GeV}$, PDF: CT10"
+legend_loc:              lower left
+legend_borderpad:        1.0
+draws_legend_background: no
+y_tick_prune_lower:      yes
+annotation_loc:          upper right
+annotation: "\\noindent Z @ Sherpa (rel-2.1.1) NLO (B, V, I, RS)\\\\[0.5em]$\\SI{66}{GeV} \\leq m_{e^+e^-} \\leq \\SI{116}{GeV}$, PDF: CT10"
 
 # Overwritable plot settings
 y_title:            '$\mathrm{d}\sigma/\mathrm{d}|y|$ [pb]'
+y_lim:              [0, 90]
 
 # Settings and overwrites for diff subplot
 diff: {
   y_title:     Ratio to Dedicated Run,
-  #y_lim:       [0.996, 1.004]
+  y_lim:       [0.99, 1.01]
 }
 
 distributions:
@@ -37,17 +41,17 @@ distributions:
     diff:             {hidden: yes}
 
   - path:             Interpolated/d02-x01-y01_CT10_0_1.0.yoda
-    label:            'MCgrid (rel-1.1)/appl $\mathrm{SF}=1.0$'
+    label:            'MCgrid/appl $\mathrm{SF}=1.0$'
     histogram_name:   /MCgrid_CDF_2009_S8383952/d02-x01-y01
     diff:             {hidden: no, normalized_by: Analysis/1_0.yoda}
 
   - path:             Interpolated/d02-x01-y01_CT10_0_0.5.yoda
-    label:            'MCgrid (rel-1.1)/appl $\mathrm{SF}=0.5$'
+    label:            'MCgrid/appl $\mathrm{SF}=0.5$'
     histogram_name:   /MCgrid_CDF_2009_S8383952/d02-x01-y01
     diff:             {hidden: no, normalized_by: Analysis/0_5.yoda}
 
   - path:             Interpolated/d02-x01-y01_CT10_0_2.0.yoda
-    label:            'MCgrid (rel-1.1)/appl $\mathrm{SF}=2.0$'
+    label:            'MCgrid/appl $\mathrm{SF}=2.0$'
     histogram_name:   /MCgrid_CDF_2009_S8383952/d02-x01-y01
     diff:             {hidden: no, normalized_by: Analysis/2_0.yoda}
 

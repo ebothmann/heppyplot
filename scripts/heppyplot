@@ -20,9 +20,6 @@ parser.add_argument("-t", "--transparency", action="store_true")
 parser.add_argument("-c", "--context", default="paper", choices=["paper", "talk"])
 args = parser.parse_args()
 
-if args.usetex:
-    heppyplot.latexify(args.context)
-
 is_fig_base_name_constant = False
 fig_dir = ""
 if args.output_path is not None:
@@ -40,6 +37,10 @@ if args.output_path is not None:
 
 for f in args.files:
     config = heppyplot.read_configuration_file(f)
+    if heppyplot.read_configuration_value(config, key='requires_latex', default=False) or args.usetex:
+        heppyplot.latexify(args.context)
+    else:
+        heppyplot.delatexify()
     config['transparency'] = args.transparency
     if args.data_path is not None:
         config['data_path'] = args.data_path

@@ -21,6 +21,7 @@ def plot(config, output_base_path):
 
     for histogram_index_or_none, histogram_or_empty in enumerate(histogram_names):
         if histogram_or_empty == '':
+            single_output_base_path = output_base_path
             histogram_index_or_none = None
         else:
             single_output_base_path = output_base_path + '-' + os.path.split(histogram_or_empty)[1]
@@ -143,12 +144,15 @@ def plot(config, output_base_path):
         if has_diff:
             for axis in axes:
                 axis.get_yaxis().set_label_coords(-0.13,0.5)
+            plt.subplots_adjust(left=0.13*font_scale)
 
         # customize the default legend created by tsplot
         if not legend_hidden:
             loc = read_configuration_value(config, key='legend_loc', default='best')
             borderpad = read_configuration_value(config, key='legend_borderpad', default=1.2)
-            configure_legend_on_axis(main_axis, title=legend_title, loc=loc, borderpad=borderpad)
+            draws_background = read_configuration_value(config, key='draws_legend_background', default=True)
+            configure_legend_on_axis(main_axis, title=legend_title, loc=loc, borderpad=borderpad, draws_background=draws_background)
+
 
         # add anchored annotation
         annotation = read_configuration_value(config, key='annotation', default=None)
