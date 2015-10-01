@@ -93,10 +93,6 @@ def plot(config, output_base_path):
             else:
                 axis.get_yaxis().get_major_formatter().set_useOffset(False)
 
-        # make axes adjacent
-        if has_diff:
-            layout_main_and_diff_axis(fig, axes)
-
         x_lim = read_configuration_value(config, key='x_lim', default=None, index=histogram_index_or_none)
         if x_lim is not None:
             x_lim_trim = read_configuration_value(config, key='x_lim_trim', default=None)
@@ -141,18 +137,12 @@ def plot(config, output_base_path):
             else:
                 axis.yaxis.set_major_locator(MaxNLocator(nbins=subplot_max_ticks-1, prune=subplot_prune))
 
-        if has_diff:
-            for axis in axes:
-                axis.get_yaxis().set_label_coords(-0.13,0.5)
-            plt.subplots_adjust(left=0.13*font_scale)
-
         # customize the default legend created by tsplot
         if not legend_hidden:
             loc = read_configuration_value(config, key='legend_loc', default='best')
             borderpad = read_configuration_value(config, key='legend_borderpad', default=1.2)
             draws_background = read_configuration_value(config, key='draws_legend_background', default=True)
             configure_legend_on_axis(main_axis, title=legend_title, loc=loc, borderpad=borderpad, draws_background=draws_background)
-
 
         # add anchored annotation
         annotation = read_configuration_value(config, key='annotation', default=None)
@@ -164,12 +154,24 @@ def plot(config, output_base_path):
         width = read_configuration_value(config, key='width', default=None)
         if width is not None:
             set_figure_size_with_width(width)
-        if title is None:
-            plt.subplots_adjust(top=0.95)
-        if read_configuration_value(config, key='x_log', default=False, index=histogram_index_or_none) or config['context'] == 'paper':
-            plt.subplots_adjust(bottom=0.13*font_scale)
-        else:
-            plt.subplots_adjust(bottom=0.1*font_scale)
+
+        plt.tight_layout(rect=[0, 0, 1, 0.96])
+
+        # align labels of main and diff plot
+        if has_diff:
+            min_x_coord = float("inf")
+            for axis in axes:
+                candidate = axis.get_yaxis().get_label().get_position()[0]
+                if candidate < min_x_coord:
+                    min_x_coord = candidate
+            for axis in axes:
+                coords = axis.transAxes.inverted().transform((min_x_coord, 0))
+                coords[1] = 0.5
+                axis.get_yaxis().set_label_coords(coords[0], coords[1])
+
+        # make axes adjacent (tight_layout does not do the job in some cases, e.g. long y axis labels)
+        if has_diff:
+            layout_main_and_diff_axis(fig, axes)
 
         if config['transparency']:
             single_output_base_path += ".png"
